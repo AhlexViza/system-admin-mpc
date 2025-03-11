@@ -52,7 +52,7 @@ if ($username) {
         </div>
         <nav class="bottom-menu">
             <div class="menu-item">
-                <a href=""><button class="icon-button">
+                <a href="./frontend/index.php"><button class="icon-button">
                         <img class="img-responsive" src="img/candario.svg" alt="Calendario">
                     </button>
                     <label class="icon-title">Reservas</label></a>
@@ -64,7 +64,7 @@ if ($username) {
                     <label class="icon-title">Reclamos</label></a>
             </div>
             <div class="menu-item">
-                <a href=""><button class="icon-button">
+                <a href="contacts.php"><button class="icon-button">
                         <img class="img-responsive" src="./img/telefono.svg" alt="Llamadas">
                     </button>
                     <label class="icon-title">Contactos</label></a>
@@ -104,11 +104,11 @@ if ($username) {
                 </div>
             <?php else: ?>
                 <a class="user_login" href="login.php">
-                    <i class="fa-regular fa-user"></i>Inicie sesión
+                    <i class="fa-regular fa-user"></i>Iniciar sesión
                 </a>
-                <a class="user_login" href="register.php">
+                <!-- <a class="user_login" href="register.php">
                     registrate
-                </a>
+                </a> -->
             <?php endif; ?>
         </div>
     </header>

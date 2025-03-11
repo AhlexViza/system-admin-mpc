@@ -57,6 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style-l.css">
     <style>
         /* Establecer la imagen de fondo */
@@ -78,14 +82,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div class="fondo-personalizado d-flex align-items-center row justify-content-around">
-        <div class="col-xl-2">
-            <a class="text-decoration-none text-center" href="index.php">
-                <img class="w-100" src="./img/logo-canchis.png" alt="logo_canchis">
+        <div class="col-xl-3 col-md-8 color-fondo des-banner">
+            <a class="d-flex align-items-center  text-decoration-none text-center" href="index.php">
+                <img class="w-25" src="./img/logocanchis.svg" alt="logo_canchis">
                 <h2 class="text-white fw-bold">Municipalidad provincial <br> de Canchis</h2>
             </a>
         </div>
-        <div class=" col-xl-4 col-sm-12 contenedor-l bg-white p-5">
-            <h1>Inicio de Sesión</h1>
+        <div class="col-xl-5 col-md-8  col-xxl-4 col-sm-12 contenedor-l bg-white p-5 ">
+            <div class="color-fondo des-logo">
+                <a class="d-flex align-items-center  text-decoration-none text-center" href="index.php">
+                    <img class="w-25" src="./img/logo-canchis.png" alt="logo_canchis">
+                    <h2 class="text-white fw-bold">Municipalidad provincial <br> de Canchis</h2>
+                </a>
+            </div>
+            <h1 class="mt-md-2 title-header">Inicio de Sesión</h1>
 
             <!-- Mostrar mensajes de error -->
             <?php if (isset($error)): ?>
@@ -98,15 +108,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form method="POST">
                 <div class="mb-3">
                     <label for="email" class="form-label">Correo Electrónico</label>
-                    <input type="email" name="email" id="email" class="form-control" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" required>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="ingrese su email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" name="password" id="password" class="form-control" required>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="ingrese su contraseña" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                <button type="submit" class="user_login w-100 p-3 border-0">Iniciar Sesión</button>
             </form>
 
             <p class="mt-3">¿No tienes cuenta? <a href="register.php">Regístrate aquí</a></p>

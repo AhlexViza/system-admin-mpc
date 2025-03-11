@@ -2,3 +2,14 @@
     border-radius: 10px;
     height: 80vh;
 }
+.color-fondo{
+    background-color: rgba(0, 0, 0, 0.13);
+    border-radius: 10px;
+}
+form{
+    font-family: "Roboto", sans-serif;
+    font-weight: 600;
+}
+.title-header{
+    font-family: "Roboto", sans-serif;
+}

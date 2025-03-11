@@ -70,7 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style-l.css">
     <style>
         /* Establecer la imagen de fondo */
         .fondo-personalizado {
@@ -90,9 +91,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <div class="fondo-personalizado d-flex align-items-center row justify-content-around">
+<div class="fondo-personalizado d-flex align-items-center row justify-content-around">
+        <div class="col-xl-3 color-fondo">
+            <a class="d-flex align-items-center  text-decoration-none text-center" href="index.php">
+                <img class="w-25" src="./img/logocanchis.svg" alt="logo_canchis">
+                <h2 class="text-white fw-bold">Municipalidad provincial <br> de Canchis</h2>
+            </a>
+        </div>
 
-        <div class="container col-xl-4 col-sm-12">
+        <div class="col-xl-5 col-md-11 col-lg-4 col-xxl-4 col-sm-12 bg-white p-5 rounded-3">
 
             <!-- Mostrar mensajes de error -->
             <?php if (isset($error)): ?>
@@ -111,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php endif; ?>
 
             <!-- Formulario de registro -->
-            <form method="POST" class="shadow p-4 rounded border bg-white">
+            <form method="POST" ><!-- class="shadow p-4 rounded border bg-white" -->
                 <h1 class="mb-4">Crear una cuenta de usuario</h1>
                 <div class="mb-3">
                     <label for="username" class="form-label">Nombre de Usuario</label>
@@ -134,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
         </div>
-    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/fondo.js"></script>

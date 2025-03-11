@@ -21,7 +21,30 @@ $result_courts = $conn->query($sql_courts);
 $sql_reservations = "SELECT * FROM reservations";
 $result_reservations = $conn->query($sql_reservations);
 ?>
+<?php
+    // Verificar si el usuario ha iniciado sesión
 
+    if (!isset($_SESSION['username'])) {
+        header("Location: login.php");
+        exit();
+    }
+
+    $username = $_SESSION['username'];
+
+    // Consulta para obtener el avatar del usuario
+    $query = "SELECT avatar FROM usuarios WHERE username = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, 's', $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
+
+    // Verifica si el avatar está configurado; si no, asigna el ícono predeterminado
+    $avatar = $user['avatar'] ?: 'fa-user-circle'; // Ícono por defecto
+
+    // Guarda el avatar en la sesión para usarlo dinámicamente
+    $_SESSION['avatar'] = $avatar;
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -30,59 +53,68 @@ $result_reservations = $conn->query($sql_reservations);
     <title>Panel de Administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/adminstyle.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-user-shield"></i> Admin Panel
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
+    <div class="admin-header">
+                <a class="admin-header-text" href="#">
+                <img class="admin-img" src="./img/logo-canchis.png" alt="logo_canchis">
+                    Municipalidad Provincial de Canchis
+                </a>
+    </div>
+    <div class="container-fluid mt-4">
         <div class="row">
-            <div class="col-md-4">
+            <div class="sidebar">
+            <div class="user">
+            <?php if (isset($_SESSION['username'])): ?>
+                <div class="container mt-5">
+                    <!-- Menú de usuario -->
+                    <div class="d-flex align-items-center position-relative icono-section">
+                        <!-- Nombre de usuario -->
+                        <span class="ms-2 fw-bold text-light fs-5 mb-3">Hola, <?php echo htmlspecialchars($username); ?></span>
+                            <!-- Flecha hacia abajo para indicar opciones -->
+                    </div>
+                </div>
+            <?php else: ?>
+                <a class="user_login text-decoration-none" href="login.php">
+                    <button class="btn btn-primary">Iniciar sesión</button>
+                </a>
+            <?php endif; ?>
+        </div>
                 <div class="list-group">
-                    <button class="list-group-item list-group-item-action active" id="btn_dashboard" onclick="showSection('dashboard')">
+                    <button class="bot active" id="btn_dashboard" onclick="showSection('dashboard')">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </button>
-                    <button class="list-group-item list-group-item-action" id="btn_users" onclick="showSection('users')">
+                    <button class="bot" id="btn_users" onclick="showSection('users')">
                         <i class="fas fa-users"></i> Usuarios
                     </button>
-                    <button class="list-group-item list-group-item-action" id="btn_courts" onclick="showSection('courts')">
+                    <button class="bot" id="btn_courts" onclick="showSection('courts')">
                         <i class="fas fa-basketball-ball"></i> Áreas Deportivas
                     </button>
-                    <button class="list-group-item list-group-item-action" id="btn_reservations" onclick="showSection('reservations')">
+                    <button class="bot" id="btn_reservations" onclick="showSection('reservations')">
                         <i class="fas fa-calendar-check"></i> Reservas
                     </button>
-                    <a href="admin_register.php" class="list-group-item list-group-item-action">
+                    <a href="admin_register.php" class="">
                         <i class="fas fa-user-plus"></i> Registrar Administradores
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action">
+                    <a href="#" class=" ">
                         <i class="fas fa-cogs"></i> Configuración
                     </a>
+                        <a class="" href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                 </div>
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-9 main-content">
                 <div id="dashboard" class="section">
                     <h1 class="mb-4">Bienvenido al Panel de Administración</h1>
-                    <p>Desde aquí puedes gestionar las configuraciones del sistema y registrar nuevos administradores.</p>
+                    <p>Desde aquí puedes gestionar las configuraciones del sistema y registrar nuevos administradores y generar reportes.</p>
                 </div>
 
                 <div id="users" class="section" style="display:none;">
-                    <h2>Usuarios Registrados</h2>
+                    <h2 class="text-center">Usuarios Registrados</h2>
+                    <form action="">
+                        <input type="search" class="form-control mb-3" placeholder="buscar usuario..">
+                    </form>
                     <table class="table">
                         <thead>
                             <tr>
@@ -115,7 +147,10 @@ $result_reservations = $conn->query($sql_reservations);
                 </div>
 
                 <div id="courts" class="section" style="display:none;">
-                    <h2>Áreas Deportivas</h2>
+                    <h2 class="text-center">Áreas Deportivas</h2>
+                    <form action="">
+                        <input type="search" class="form-control mb-3" placeholder="buscar areas deportivas..">
+                    </form>
                     <table class="table">
                         <thead>
                             <tr>
@@ -150,7 +185,10 @@ $result_reservations = $conn->query($sql_reservations);
                 </div>
 
                 <div id="reservations" class="section" style="display:none;">
-                    <h2>Reservas Realizadas</h2>
+                    <h2 class="text-center">Reservas Realizadas</h2>
+                    <form action="">
+                        <input type="search" class="form-control mb-3" placeholder="buscar reservas..">
+                    </form>
                     <table class="table">
                         <thead>
                             <tr>
@@ -277,24 +315,26 @@ $result_reservations = $conn->query($sql_reservations);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        function showSection(sectionId) {
-            // Ocultar todas las secciones
-            var sections = document.querySelectorAll('.section');
-            sections.forEach(function(section) {
-                section.style.display = 'none';
-            });
+    function showSection(sectionId) {
+        // Ocultar todas las secciones
+        var sections = document.querySelectorAll('.section');
+        sections.forEach(function(section) {
+            section.style.display = 'none';
+        });
 
-            // Mostrar la sección seleccionada
-            document.getElementById(sectionId).style.display = 'block';
+        // Mostrar la sección seleccionada
+        document.getElementById(sectionId).style.display = 'block';
 
-            // Cambiar el estado activo de los botones
-            var buttons = document.querySelectorAll('.list-group-item');
-            buttons.forEach(function(button) {
-                button.classList.remove('active');
-            });
+        // Cambiar el estado activo de los botones
+        var buttons = document.querySelectorAll('.sidebar .bot, .sidebar a');
+        buttons.forEach(function(button) {
+            button.classList.remove('active');
+        });
 
-            document.getElementById('btn_' + sectionId).classList.add('active');
-        }
+        // Establecer el estado activo en el botón o enlace clicado
+        var selectedElement = document.getElementById('btn_' + sectionId) || document.querySelector('a[href="#' + sectionId + '"]');
+        selectedElement.classList.add('active');
+    }
 
         // Set data for the modals dynamically
         document.addEventListener('DOMContentLoaded', function() {

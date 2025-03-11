@@ -124,7 +124,7 @@ $_SESSION['avatar'] = $avatar;
 
             </div>
             <div class="menu-item">
-                <a href=""><button class="icon-button active">
+                <a href="../index.php"><button class="icon-button active">
                         <img class="img-responsive" src="../img/home.svg" alt="Inicio">
                     </button>
                     <label class="icon-title">Principal</label></a>
@@ -153,7 +153,7 @@ $_SESSION['avatar'] = $avatar;
                             <ul class="list-unstyled text-center">
                                 <li><a href="profile.php" class="text-decoration-none text-dark p-2">Editar perfil</a></li>
                                 <li><a href="historial.php" class="text-decoration-none text-dark p-2">Historial de actividades</a></li>
-                                <li><a href="logout.php" class="text-decoration-none text-dark p-2">Cerrar sesión</a></li>
+                                <li><a href="../logout.php" class="text-decoration-none text-dark p-2">Cerrar sesión</a></li>
                             </ul>
                         </div>
                     </div>
@@ -224,10 +224,17 @@ $_SESSION['avatar'] = $avatar;
         <!-- Selección de Instalación -->
         <div class="row mb-4">
             <div class="col-md-4">
-                <label class="form-label">Seleccionar Instalación:</label>
+                <label class="form-label">Seleccionar distrito o lugar:</label>
                 <select class="form-select" id="facilitySelect">
                     <option value="" selected disabled>-- Selecciona una instalación --</option>
                     <!-- Las opciones se cargarán dinámicamente desde el backend -->
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Seleccione la cancha:</label>
+                <select class="form-select" id="courtType" disabled>
+                    <option value="" selected disabled>-- Selecciona una cancha --</option>
+                    <!-- Las opciones se cargarán dinámicamente según la instalación seleccionada -->
                 </select>
             </div>
             <div class="col-md-4">
@@ -237,13 +244,6 @@ $_SESSION['avatar'] = $avatar;
                     <option value="futbol-11">Fútbol 11</option>
                     <option value="futbol-7">Fútbol 7</option>
                     <option value="futsal">Futsal</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Cancha:</label>
-                <select class="form-select" id="courtType" disabled>
-                    <option value="" selected disabled>-- Selecciona una cancha --</option>
-                    <!-- Las opciones se cargarán dinámicamente según la instalación seleccionada -->
                 </select>
             </div>
         </div>

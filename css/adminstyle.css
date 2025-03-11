@@ -1,0 +1,92 @@
+
+/* ===== Estilos Generales ===== */
+body {
+    background: #F4F6F9;
+    font-family: 'Arial', sans-serif;
+}
+
+/* ===== Menú Lateral ===== */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #1A237E;
+    padding: 20px;
+    position: fixed;
+    color: white;
+}
+
+.sidebar .logo {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar .bot, a {
+    text-align: inherit;
+    border: none;
+    background: none;
+    color: white;
+    display: block;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: 0.3s ease;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.sidebar a i {
+    width: 25px;
+}
+.sidebar .bot i{
+    width: auto;
+}
+
+.sidebar a.active {
+    background: #3949AB;
+}
+.sidebar .bot.active{
+    background: #3949AB;
+}
+
+.sidebar a:hover {
+    background: #303F9F;
+    transform: scale(1.05);
+}
+.sidebar .bot:hover{
+    background: #303F9F;
+    transform: scale(1.05);
+}
+/* ===== Contenido Principal ===== */
+.main-content {
+    margin-left: 270px;
+    padding: 40px;
+}
+
+.card-custom {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+.admin-header{
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    background: rgb(255, 255, 255);
+    border-radius:10px;
+    margin: 10px;
+    padding: 5px 0 5px 0;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+.admin-header-text{
+    font-weight:  bold;
+    text-decoration: none;
+    color:rgb(0, 0, 0);
+    font-size:20px;
+
+}
+.admin-img{
+    height: 60px;
+}

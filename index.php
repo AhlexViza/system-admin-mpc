@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" href="./img/logo-canchis.png" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>municipalidad provincial canchis</title>
@@ -11,7 +12,7 @@
         <!-- Contenedor principal -->
         <div class="video-container">
             <video autoplay muted loop id="video-background">
-                <source src="fondo.mp4" type="video/mp4">
+                <source src="./img/fondo-principal.mp4" type="video/mp4">
                 <source src="video.webm" type="video/webm">
                 <source src="video.ogv" type="video/ogg">
                 Tu navegador no soporta el video de fondo.

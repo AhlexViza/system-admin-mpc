@@ -156,7 +156,10 @@ body {
                     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                     <button class="view-btn1" type="submit">Ver</button>
                 </form>
-                        <form action="frontend/"><button class="view-btn2">Reservar</button></form>
+                <form action="frontend/" method="post">
+                    <input type="hidden" name="courtName" value="<?php echo $row['name']; ?>">
+                    <button class="view-btn2" type="submit">Reservar</button>
+                </form>
                     </div>
                 </div>
             <?php
