@@ -54,6 +54,12 @@ $result_reservations = $conn->query($sql_reservations);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="css/adminstyle.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
+    
 </head>
 <body>
     <div class="admin-header">
@@ -97,9 +103,9 @@ $result_reservations = $conn->query($sql_reservations);
                     <a href="admin_register.php" class="">
                         <i class="fas fa-user-plus"></i> Registrar Administradores
                     </a>
-                    <a href="#" class=" ">
-                        <i class="fas fa-cogs"></i> Configuración
-                    </a>
+                    <button class="bot" id="btn_reports" onclick="showSection('reports')">
+                        <i class="bi bi-clipboard-data-fill"></i> Reportes
+                    </button>
                         <a class="" href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                 </div>
             </div>
@@ -107,7 +113,135 @@ $result_reservations = $conn->query($sql_reservations);
             <div class="col-md-9 main-content">
                 <div id="dashboard" class="section">
                     <h1 class="mb-4">Bienvenido al Panel de Administración</h1>
-                    <p>Desde aquí puedes gestionar las configuraciones del sistema y registrar nuevos administradores y generar reportes.</p>
+                    <?php
+                        $total_reservas = $conn->query("SELECT COUNT(*) AS total FROM reservations")->fetch_assoc()['total'];
+                        $total_usuarios = $conn->query("SELECT COUNT(*) AS total FROM usuarios")->fetch_assoc()['total'];
+                        $canchas_disponibles = $conn->query("SELECT COUNT(*) AS total FROM courts")->fetch_assoc()['total'];
+
+                        // Obtener reservas para el calendario
+                        $reservas_query = $conn->query("SELECT id ,court_id date, start_time, end_time FROM reservations");
+                        $reservas = [];
+                        if ($reservas_query) {
+                            while ($row = $reservas_query->fetch_assoc()) {
+                                $reservas[] = $row;
+                            }
+                        }
+                        $conn->close();
+                    ?>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <!-- Tarjetas de estadísticas -->
+                            <div class="col-md-3">
+                                <div class="card text-black mb-3 shadow animate">
+                                    <div class="card-custom text-center">
+                                        <i class="fas fa-calendar-check text-danger"></i>
+                                        <h5 class="card-title mt-2">Total de Reservas</h5>
+                                        <p class="card-text fs-3 fw-bold count" data-count="<?php echo $total_reservas; ?>">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-black mb-3 shadow animate">
+                                    <div class="card-custom text-center">
+                                    <i class="fas fa-users text-primary"></i>
+                                        <h5 class="card-title mt-2">Usuarios Registrados</h5>
+                                        <p class="card-text fs-3 fw-bold count" data-count="<?php echo $total_usuarios; ?>">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-black mb-3 shadow animate">
+                                    <div class="card-custom text-center">
+                                        <i class="fas fa-futbol text-success"></i>
+                                        <h5 class="card-title mt-2">Canchas Disponibles</h5>
+                                        <p class="card-text fs-3 fw-bold count" data-count="<?php echo $canchas_disponibles; ?>">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-black  mb-3 shadow animate">
+                                    <div class="card-custom text-center">
+                                        <i class="fa fa-eye text-primary"></i>
+                                        <h5 class="card-title mt-2">Visitas</h5>
+                                        <p class="card-text fs-3 fw-bold count" id="contadorVisitas"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gráfico de visitas -->
+                        <div class="card p-4 mt-4">
+                            <h5 class="text-center">Estadísticas de Visitas</h5>
+                            <canvas id="graficoVisitas"></canvas>
+                        </div>
+
+                        <!-- Barra de búsqueda -->
+                        <div class="mt-4">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Buscar...">
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            // Animación de conteo
+                            document.querySelectorAll('.count').forEach(counter => {
+                                let target = +counter.getAttribute('data-count');
+                                let count = 0;
+                                let increment = target / 100;
+                                let updateCount = () => {
+                                    count += increment;
+                                    counter.textContent = count < target ? Math.floor(count) : target;
+                                    if (count < target) requestAnimationFrame(updateCount);
+                                };
+                                updateCount();
+                            });
+
+                            // Contador de visitas con CountAPI
+                            fetch("https://api.countapi.xyz/hit/reservaareas.ainnovarsystems.com/contador")
+                                .then(response => response.json())
+                                .then(data => {
+                                    document.getElementById("contadorVisitas").textContent = data.value;
+                                });
+
+                            // Gráfico de visitas
+                            const ctx = document.getElementById("graficoVisitas").getContext("2d");
+                            new Chart(ctx, {
+                                type: "line",
+                                data: {
+                                    labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+                                    datasets: [{
+                                        label: "Visitas",
+                                        data: [12, 19, 3, 5, 2, 3, 10],
+                                        borderColor: "#007bff",
+                                        backgroundColor: "rgba(0,123,255,0.2)",
+                                        fill: true
+                                    }]
+                                }
+                            });
+
+                            // Búsqueda en tiempo real
+                            document.getElementById("searchInput").addEventListener("input", function () {
+                                let value = this.value.toLowerCase();
+                                document.querySelectorAll(".card").forEach(card => {
+                                    card.style.display = card.textContent.toLowerCase().includes(value) ? "block" : "none";
+                                });
+                            });
+
+                            // Notificación en tiempo real
+                            setTimeout(() => {
+                                let notificacion = document.getElementById("notificacion");
+                                notificacion.textContent = "Nuevo usuario registrado!";
+                                notificacion.style.display = "block";
+                                setTimeout(() => notificacion.style.display = "none", 3000);
+                            }, 5000);
+
+                            // Modo Oscuro
+                            document.getElementById("toggleDarkMode").addEventListener("click", function () {
+                                document.body.classList.toggle("bg-dark");
+                                document.body.classList.toggle("text-white");
+                            });
+                        });
+                    </script>
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
                 </div>
 
                 <div id="users" class="section" style="display:none;">
@@ -221,6 +355,106 @@ $result_reservations = $conn->query($sql_reservations);
                             ?>
                         </tbody>
                     </table>
+                </div>
+
+                <div id="reports" class="section" style="display:none;">
+                <?php
+                    require 'db.php'; // Archivo de conexión a la base de datos
+
+                    // Reporte 1: Reservas por cancha
+                    $query1 = "SELECT c.name AS cancha, COUNT(r.id) AS total_reservas FROM reservations r 
+                            JOIN courts c ON r.court_id = c.id GROUP BY c.name ORDER BY total_reservas DESC";
+                    $result1 = $conn->query($query1);
+
+                    // Reporte 2: Ingresos generados por cancha
+                    $query2 = "SELECT c.name AS cancha, SUM(c.price_per_hour) AS total_ingresos FROM reservations r 
+                            JOIN courts c ON r.court_id = c.id GROUP BY c.name ORDER BY total_ingresos DESC";
+                    $result2 = $conn->query($query2);
+
+                    // Reporte 3: Reservas por usuario
+                    $query3 = "SELECT u.username AS usuario, COUNT(r.id) AS total_reservas FROM reservations r JOIN usuarios u ON r.id = u.id GROUP BY u.username ORDER BY total_reservas DESC";
+                    $result3 = $conn->query($query3);
+                    ?>
+
+                    <!DOCTYPE html>
+                    <html lang="es">
+                    <head>
+                        
+                        
+                    </head>
+                    <body class="bg-light">
+                        <div class="container mt-5">
+                            <h1 class="text-center mb-4"><i class="fa-solid fa-chart-bar"></i> Reportes de Reservas</h1>
+                            
+                            <div class="card mb-4 shadow-sm animate__animated animate__fadeInUp">
+                                <div class="card-header bg-primary text-white"><i class="fa-solid fa-futbol"></i> Reservas por Cancha</div>
+                                <div class="card-body">
+                                    <canvas id="reservasCancha"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="card mb-4 shadow-sm animate__animated animate__fadeInUp">
+                                <div class="card-header bg-success text-white"><i class="fa-solid fa-dollar-sign"></i> Ingresos por Cancha</div>
+                                <div class="card-body">
+                                    <canvas id="ingresosCancha"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="card mb-4 shadow-sm animate__animated animate__fadeInUp">
+                                <div class="card-header bg-warning text-dark"><i class="fa-solid fa-user"></i> Reservas por Usuario</div>
+                                <div class="card-body">
+                                    <canvas id="reservasUsuario"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                                const ctx1 = document.getElementById('reservasCancha').getContext('2d');
+                                const data1 = {
+                                    labels: [<?php while ($row = $result1->fetch_assoc()) { echo "'" . $row['cancha'] . "',"; } ?>],
+                                    datasets: [{
+                                        label: 'Total Reservas',
+                                        data: [<?php $result1->data_seek(0); while ($row = $result1->fetch_assoc()) { echo $row['total_reservas'] . ","; } ?>],
+                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 1
+                                    }]
+                                };
+                                new Chart(ctx1, { type: 'bar', data: data1 });
+
+                                const ctx2 = document.getElementById('ingresosCancha').getContext('2d');
+                                const data2 = {
+                                    labels: [<?php while ($row = $result2->fetch_assoc()) { echo "'" . $row['cancha'] . "',"; } ?>],
+                                    datasets: [{
+                                        label: 'Total Ingresos',
+                                        data: [<?php $result2->data_seek(0); while ($row = $result2->fetch_assoc()) { echo $row['total_ingresos'] . ","; } ?>],
+                                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                        borderColor: 'rgba(255, 99, 132, 1)',
+                                        borderWidth: 1
+                                    }]
+                                };
+                                new Chart(ctx2, { type: 'bar', data: data2 });
+
+                                const ctx3 = document.getElementById('reservasUsuario').getContext('2d');
+                                const data3 = {
+                                    labels: [<?php while ($row = $result3->fetch_assoc()) { echo "'" . $row['usuario'] . "',"; } ?>],
+                                    datasets: [{
+                                        label: 'Total Reservas',
+                                        data: [<?php $result3->data_seek(0); while ($row = $result3->fetch_assoc()) { echo $row['total_reservas'] . ","; } ?>],
+                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    }]
+                                };
+                                new Chart(ctx3, { type: 'bar', data: data3 });
+                            });
+                        </script>
+
+                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"></script>
+                    </body>
+                    </html>
                 </div>
             </div>
         </div>
